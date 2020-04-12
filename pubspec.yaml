@@ -1,0 +1,38 @@
+name: grocery_list
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+  passwordfield: ^0.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.7.4
+
+flutter:
+  uses-material-design: true
+  fonts:
+  - family: IndieFlower
+    fonts:
+      - asset: fonts/IndieFlower-Regular.ttf
+  - family: Manslava
+    fonts:
+      - asset: fonts/Mansalva-Regular.ttf
+  - family: Henny
+    fonts:
+      - asset: fonts/HennyPenny-Regular.ttf
+  assets:
+    - images/
+
+flutter_icons:
+  image_path: "images/logo1.png"
+  android: true
+  ios: true
