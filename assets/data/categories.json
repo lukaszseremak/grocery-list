@@ -1,0 +1,10 @@
+[
+    {
+        "name": "Fruits",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "Apple",
+            "Bannanas"
+        ]
+    }
+]

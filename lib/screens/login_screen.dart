@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.fromLTRB(50, 130, 50, 130),
+        padding: EdgeInsets.fromLTRB(40, 130, 40, 100),
         child: ListView(
           children: <Widget>[
             Container(
@@ -115,6 +115,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (passwordController.text == password) {
                       // przejsc do ekranu glownego
                       print('Przechodzenie do programu glownego');
+                      setState(() {
+                        passwordController.text = "";
+                        isPasswordIncorect = false;
+                      });
                       Navigator.pushNamed(context, 'main_screen');
                     } else {
                       print('Haslo nieprawidlowe');

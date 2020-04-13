@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       themeMode: ThemeMode.dark,
       darkTheme: ThemeData(fontFamily: 'Manslava', brightness: Brightness.dark),
-      initialRoute: 'login_screen',
+      initialRoute: 'main_screen',
       routes: {
         'login_screen': (context) => LoginScreen(),
         'main_screen': (context) => MainScreen(),
