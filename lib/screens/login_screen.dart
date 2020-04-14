@@ -28,108 +28,117 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(40, 130, 40, 100),
-        child: ListView(
-          children: <Widget>[
-            Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  'Grocery list',
+      resizeToAvoidBottomInset: false,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/log_screen.png"),
+            fit: BoxFit.fill,
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(40, 145, 40, 100),
+          child: ListView(
+            children: <Widget>[
+              Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    'Grocery list',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 65.0,
+                      fontFamily: 'Manslava',
+                    ),
+                  )),
+              Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    'Sign in',
+                    style: TextStyle(fontSize: 30, fontFamily: 'IndieFlower'),
+                  )),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: TextField(
                   style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 65.0,
-                    fontFamily: 'Manslava',
+                    fontSize: 20.0,
+                    fontFamily: 'IndieFlower',
                   ),
-                )),
-            Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  'Sign in',
-                  style: TextStyle(fontSize: 30, fontFamily: 'IndieFlower'),
-                )),
-            Container(
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: TextField(
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontFamily: 'IndieFlower',
-                ),
-                obscureText: obscureText,
-                controller: passwordController,
-                decoration: InputDecoration(
-                  suffixIcon: GestureDetector(
-                    child: Icon(
-                      Icons.remove_red_eye,
-                      color: obscureText ? Colors.grey : Colors.amber[800],
+                  obscureText: obscureText,
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    suffixIcon: GestureDetector(
+                      child: Icon(
+                        Icons.remove_red_eye,
+                        color: obscureText ? Colors.grey : Colors.amber[800],
+                      ),
+                      onTapDown: inContact,
+                      onTapUp: outContact,
                     ),
-                    onTapDown: inContact,
-                    onTapUp: outContact,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.yellow[200]),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  border: new OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(
-                      const Radius.circular(10.0),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.yellow[200]),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                    borderSide: const BorderSide(
-                      color: Colors.white,
-                      width: 2.0,
+                    border: new OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(10.0),
+                      ),
+                      borderSide: const BorderSide(
+                        color: Colors.white,
+                        width: 2.0,
+                      ),
                     ),
+                    labelStyle: TextStyle(color: Colors.red[300]),
+                    labelText: 'Password',
+                    errorText: isPasswordIncorect
+                        ? 'Incorect password! Please, try again.'
+                        : null,
+                    errorStyle:
+                        TextStyle(color: Colors.redAccent, fontSize: 13.5),
                   ),
-                  labelStyle: TextStyle(color: Colors.red[300]),
-                  labelText: 'Password',
-                  errorText: isPasswordIncorect
-                      ? 'Incorect password! Please, try again.'
-                      : null,
-                  errorStyle:
-                      TextStyle(color: Colors.redAccent, fontSize: 13.5),
                 ),
               ),
-            ),
-            SizedBox(height: 20.0),
-            Container(
-                height: 50,
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(
-                      10.0,
+              SizedBox(height: 20.0),
+              Container(
+                  height: 50,
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(
+                        10.0,
+                      ),
                     ),
-                  ),
-                  textColor: Colors.white,
-                  color: Colors.red[300],
-                  child: Text(
-                    'Login',
-                    style: TextStyle(
-                      fontSize: 23.0,
-                      fontFamily: 'IndieFlower',
+                    textColor: Colors.white,
+                    color: Colors.red[300],
+                    child: Text(
+                      'Login',
+                      style: TextStyle(
+                        fontSize: 23.0,
+                        fontFamily: 'IndieFlower',
+                      ),
                     ),
-                  ),
-                  onPressed: () {
-                    print(passwordController.text);
-                    if (passwordController.text == password) {
-                      // przejsc do ekranu glownego
-                      print('Przechodzenie do programu glownego');
-                      setState(() {
-                        passwordController.text = "";
-                        isPasswordIncorect = false;
-                      });
-                      Navigator.pushNamed(context, 'main_screen');
-                    } else {
-                      print('Haslo nieprawidlowe');
-                      setState(() {
-                        passwordController.text = "";
-                        isPasswordIncorect = true;
-                      });
-                    }
-                  },
-                )),
-          ],
+                    onPressed: () {
+                      print(passwordController.text);
+                      if (passwordController.text == password) {
+                        // przejsc do ekranu glownego
+                        print('Przechodzenie do programu glownego');
+                        setState(() {
+                          passwordController.text = "";
+                          isPasswordIncorect = false;
+                        });
+                        Navigator.pushNamed(context, 'main_screen');
+                      } else {
+                        print('Haslo nieprawidlowe');
+                        setState(() {
+                          passwordController.text = "";
+                          isPasswordIncorect = true;
+                        });
+                      }
+                    },
+                  )),
+            ],
+          ),
         ),
       ),
     );

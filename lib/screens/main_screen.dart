@@ -144,11 +144,11 @@ class _MainScreenState extends State<MainScreen> {
                     'Menu',
                     style: TextStyle(color: Colors.white, fontSize: 25),
                   ),
-                  decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: AssetImage('assets/images/cover.jpg'))),
+                  // decoration: BoxDecoration(
+                  //     color: Colors.grey[400],
+                  //     image: DecorationImage(
+                  //         fit: BoxFit.fill,
+                  //         image: AssetImage('assets/images/cover.jpg'))),
                 ),
                 ListTile(
                   leading: Icon(Icons.verified_user),
@@ -163,7 +163,8 @@ class _MainScreenState extends State<MainScreen> {
                 ListTile(
                   leading: Icon(Icons.exit_to_app),
                   title: Text('Logout'),
-                  onTap: () => {Navigator.of(context).pop()},
+                  onTap: () => Navigator.popUntil(
+                      context, ModalRoute.withName('login_screen')),
                 ),
               ],
             ),

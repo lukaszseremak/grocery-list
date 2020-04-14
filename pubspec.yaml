@@ -36,6 +36,6 @@ flutter:
     - assets/data/categories.json
 
 flutter_icons:
-  image_path: "assets/images/main_icon.png"
+  image_path: "assets/images/logo.png"
   android: true
   ios: true
