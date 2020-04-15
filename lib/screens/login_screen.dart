@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: Alignment.center,
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    'Grocery list',
+                    'Shopping list',
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 65.0,

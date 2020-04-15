@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Shopping List',
       themeMode: ThemeMode.dark,
       darkTheme: ThemeData(fontFamily: 'Manslava', brightness: Brightness.dark),
       initialRoute: 'login_screen',
