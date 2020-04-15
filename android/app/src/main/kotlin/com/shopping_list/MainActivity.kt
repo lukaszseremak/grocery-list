@@ -1,4 +1,4 @@
-package com.example.grocery_list
+package com.shopping_list
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
