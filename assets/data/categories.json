@@ -6,5 +6,98 @@
             "Apple",
             "Bannanas"
         ]
+    },
+    {
+        "name": "Vegetables",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "Corn",
+            "Mushroom",
+            "Broccoli",
+            "Cucumber",
+            "Red pepper/red bell pepper",
+            "Pineapple",
+            "Tomato"
+        ]
+    },
+    {
+        "name": "Meat & Fish",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "chicken",
+            "ham"
+        ]
+    },
+    {
+        "name": "Bread",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "ciabatta",
+            "pita"
+        ]
+    },
+    {
+        "name": "Diary",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "milk",
+            "butter"
+        ]
+    },
+    {
+        "name": "Snacks & Sweets",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "candy",
+            "crips"
+        ]
+    },
+    {
+        "name": "Pasta & Ceral",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "spaghetti",
+            "corn flakes"
+        ]
+    },
+    {
+        "name": "Detergent",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "soap",
+            "paper towel"
+        ]
+    },
+    {
+        "name": "Beverages",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "juice",
+            "water"
+        ]
+    },
+    {
+        "name": "Cosmetics",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "lipstics",
+            "face powder"
+        ]
+    },
+    {
+        "name": "Spices",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "curry",
+            "basil"
+        ]
+    },
+    {
+        "name": "Others",
+        "photo_path": "assets/images/categories/fruits.jpg",
+        "products": [
+            "jeans",
+            "coal"
+        ]
     }
 ]

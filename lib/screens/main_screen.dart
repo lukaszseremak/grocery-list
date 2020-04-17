@@ -18,28 +18,27 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  List<String> reportList = [
-    "Not relevant",
-    "Illegal",
-    "Spam",
-    "Offensive",
-    "Uncivil"
-  ];
-
-  List<String> selectedReportList = List();
+  Map<String, List<String>> selectedProducts = Map();
 
   _showReportDialog(String typeOfProduct, List products) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          //Here we will build the content of the dialog
           return AlertDialog(
             title: Text("Choose $typeOfProduct"),
             content: MultiSelectChip(
               products,
               onSelectionChanged: (selectedList) {
                 setState(() {
-                  selectedReportList = selectedList;
+                  if (selectedProducts.containsKey(typeOfProduct)) {
+                    selectedProducts[typeOfProduct] =
+                        (selectedProducts[typeOfProduct] + selectedList)
+                            .toSet()
+                            .toList();
+                  } else {
+                    selectedProducts[typeOfProduct] = selectedList;
+                  }
+                  print(selectedProducts);
                 });
               },
             ),
@@ -75,11 +74,12 @@ class _MainScreenState extends State<MainScreen> {
                       constraints: BoxConstraints.expand(),
                       child: FlatButton(
                         onPressed: () => _showReportDialog(
-                            snapshot.data[0]["name"],
-                            List<String>.from(snapshot.data[0]["products"])),
+                            snapshot.data[index]["name"],
+                            List<String>.from(
+                                snapshot.data[index]["products"])),
                         padding: EdgeInsets.all(10.0),
                         child: Image.asset(
-                          snapshot.data[0]["photo_path"],
+                          snapshot.data[index]["photo_path"],
                         ),
                       ),
                     ),
@@ -88,7 +88,6 @@ class _MainScreenState extends State<MainScreen> {
               },
             ),
           );
-          new Future.delayed(const Duration(seconds: 3), () {});
         } else if (snapshot.hasError) {
           body = Center(
             child: Column(
