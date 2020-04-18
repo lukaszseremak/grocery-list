@@ -5,6 +5,14 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:shadow/shadow.dart';
 
+class Category {
+  String name;
+  Image image;
+  List<String> products;
+
+  Category({this.name, this.image, this.products});
+}
+
 Future<List> _loadAsset() async {
   String jsonString =
       await rootBundle.loadString("assets/data/categories.json");
@@ -28,6 +36,7 @@ class _MainScreenState extends State<MainScreen> {
             title: Text("Choose $typeOfProduct"),
             content: MultiSelectChip(
               products,
+              typeOfProduct,
               onSelectionChanged: (selectedList) {
                 setState(() {
                   if (selectedProducts.containsKey(typeOfProduct)) {
@@ -67,20 +76,33 @@ class _MainScreenState extends State<MainScreen> {
             children: List.generate(
               12,
               (index) {
-                return Shadow(
-                  opacity: 0.15,
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints.expand(),
-                      child: FlatButton(
-                        onPressed: () => _showReportDialog(
-                            snapshot.data[index]["name"],
-                            List<String>.from(
-                                snapshot.data[index]["products"])),
-                        padding: EdgeInsets.all(10.0),
-                        child: Image.asset(
-                          snapshot.data[index]["photo_path"],
-                        ),
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints.expand(),
+                    child: FlatButton(
+                      onPressed: () => _showReportDialog(
+                          snapshot.data[index]["name"],
+                          List<String>.from(snapshot.data[index]["products"])),
+                      padding: EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            child: Shadow(
+                              opacity: 0.15,
+                              child: Image.asset(
+                                snapshot.data[index]["photo_path"],
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(4),
+                            child: Text(
+                              snapshot.data[index]["name"],
+                              style: TextStyle(fontSize: 15.0),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),
@@ -176,10 +198,12 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 class MultiSelectChip extends StatefulWidget {
-  final List<String> reportList;
+  final List<String> productList;
+  final String typeOfProduct;
   final Function(List<String>) onSelectionChanged;
 
-  MultiSelectChip(this.reportList, {this.onSelectionChanged});
+  MultiSelectChip(this.productList, this.typeOfProduct,
+      {this.onSelectionChanged});
 
   @override
   _MultiSelectChipState createState() => _MultiSelectChipState();
@@ -192,7 +216,7 @@ class _MultiSelectChipState extends State<MultiSelectChip> {
   _buildChoiceList() {
     List<Widget> choices = List();
 
-    widget.reportList.forEach((item) {
+    widget.productList.forEach((item) {
       choices.add(Container(
         padding: const EdgeInsets.all(2.0),
         child: ChoiceChip(
