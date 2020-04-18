@@ -165,11 +165,11 @@ class _MainScreenState extends State<MainScreen> {
                     'Menu',
                     style: TextStyle(color: Colors.white, fontSize: 25),
                   ),
-                  // decoration: BoxDecoration(
-                  //     color: Colors.grey[400],
-                  //     image: DecorationImage(
-                  //         fit: BoxFit.fill,
-                  //         image: AssetImage('assets/images/cover.jpg'))),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: AssetImage('assets/images/menu.png'))),
                 ),
                 ListTile(
                   leading: Icon(Icons.verified_user),
