@@ -1,23 +1,22 @@
-import 'dart:convert';
-
-import 'package:flutter/services.dart' show rootBundle;
-
 import 'package:flutter/material.dart';
 import 'package:shadow/shadow.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shopping_list/const.dart';
 
 class Category {
   String name;
   Image image;
-  List<String> products;
+  List products;
 
   Category({this.name, this.image, this.products});
-}
 
-Future<List> _loadAsset() async {
-  String jsonString =
-      await rootBundle.loadString("assets/data/categories.json");
-  var data = json.decode(jsonString);
-  return data;
+  factory Category.fromDocument(DocumentSnapshot document) {
+    return Category(
+      name: document['name'] as String,
+      image: categoryNameImageMapping[document['name']],
+      products: document['products'],
+    );
+  }
 }
 
 class MainScreen extends StatefulWidget {
@@ -61,138 +60,132 @@ class _MainScreenState extends State<MainScreen> {
         });
   }
 
+// shopping-list-2a711
+
+  @override
   Widget build(BuildContext context) {
-    Future<List> categories = _loadAsset();
-
-    return FutureBuilder<List>(
-      future: categories,
-      builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-        Widget body;
-
-        if (snapshot.hasData) {
-          body = GridView.count(
-            crossAxisCount: 3,
-            // TODO: stworz klase categorie ktora posiada 3 pola: nazwa, zdjecie, lista produktow.
-            children: List.generate(
-              12,
-              (index) {
-                return Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints.expand(),
-                    child: FlatButton(
-                      onPressed: () => _showReportDialog(
-                          snapshot.data[index]["name"],
-                          List<String>.from(snapshot.data[index]["products"])),
-                      padding: EdgeInsets.all(10.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            child: Shadow(
-                              opacity: 0.15,
-                              child: Image.asset(
-                                snapshot.data[index]["photo_path"],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Menu'),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text(
+                'Menu',
+                style: TextStyle(color: Colors.white, fontSize: 25),
+              ),
+              decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/images/menu.png'))),
+            ),
+            ListTile(
+              leading: Icon(Icons.verified_user),
+              title: Text('Profile'),
+              onTap: () => {Navigator.of(context).pop()},
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () => {Navigator.of(context).pop()},
+            ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Logout'),
+              onTap: () => Navigator.popUntil(
+                  context, ModalRoute.withName('login_screen')),
+            ),
+          ],
+        ),
+      ),
+      body: new StreamBuilder(
+        stream: Firestore.instance.collection("categories").snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return GridView.count(
+              crossAxisCount: 3,
+              children: snapshot.data.documents.map<Widget>(
+                (document) {
+                  Category category = Category.fromDocument(document);
+                  return Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints.expand(),
+                      child: FlatButton(
+                        onPressed: () => _showReportDialog(category.name,
+                            List<String>.from(category.products)),
+                        padding: EdgeInsets.all(10.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                              child: Shadow(
+                                opacity: 0.15,
+                                child: category.image,
                               ),
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(4),
-                            child: Text(
-                              snapshot.data[index]["name"],
-                              style: TextStyle(fontSize: 15.0),
-                            ),
-                          )
-                        ],
+                            Container(
+                              padding: EdgeInsets.all(4),
+                              child: Text(
+                                category.name,
+                                style: TextStyle(fontSize: 17.0),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
+                  );
+                },
+              ).toList(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                    size: 80,
                   ),
-                );
-              },
-            ),
-          );
-        } else if (snapshot.hasError) {
-          body = Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                  size: 80,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Text(
-                    'Error: ${snapshot.error}',
-                    style: TextStyle(
-                      fontSize: 15.0,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: TextStyle(
+                        fontSize: 15.0,
+                      ),
                     ),
+                  )
+                ],
+              ),
+            );
+          } else {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    child: CircularProgressIndicator(),
+                    width: 60,
+                    height: 60,
                   ),
-                )
-              ],
-            ),
-          );
-        } else {
-          body = Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  child: CircularProgressIndicator(),
-                  width: 60,
-                  height: 60,
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 16),
-                  child: Text('Awaiting result...'),
-                )
-              ],
-            ),
-          );
-        }
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Menu'),
-          ),
-          drawer: Drawer(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                DrawerHeader(
-                  child: Text(
-                    'Menu',
-                    style: TextStyle(color: Colors.white, fontSize: 25),
-                  ),
-                  decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage('assets/images/menu.png'))),
-                ),
-                ListTile(
-                  leading: Icon(Icons.verified_user),
-                  title: Text('Profile'),
-                  onTap: () => {Navigator.of(context).pop()},
-                ),
-                ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text('Settings'),
-                  onTap: () => {Navigator.of(context).pop()},
-                ),
-                ListTile(
-                  leading: Icon(Icons.exit_to_app),
-                  title: Text('Logout'),
-                  onTap: () => Navigator.popUntil(
-                      context, ModalRoute.withName('login_screen')),
-                ),
-              ],
-            ),
-          ),
-          body: body,
-        );
-      },
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Text('Awaiting result...'),
+                  )
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }
