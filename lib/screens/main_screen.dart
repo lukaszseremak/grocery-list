@@ -106,41 +106,52 @@ class _MainScreenState extends State<MainScreen> {
         stream: Firestore.instance.collection("categories").snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return GridView.count(
-              crossAxisCount: 3,
-              children: snapshot.data.documents.map<Widget>(
-                (document) {
-                  Category category = Category.fromDocument(document);
-                  return Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints.expand(),
-                      child: FlatButton(
-                        onPressed: () => _showReportDialog(category.name,
-                            List<String>.from(category.products)),
-                        padding: EdgeInsets.all(10.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Expanded(
-                              child: Shadow(
-                                opacity: 0.15,
-                                child: category.image,
-                              ),
+            return Padding(
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Container(
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  children: snapshot.data.documents.map<Widget>(
+                    (document) {
+                      Category category = Category.fromDocument(document);
+                      return Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints.expand(),
+                          child: FlatButton(
+                            onPressed: () => _showReportDialog(category.name,
+                                List<String>.from(category.products)),
+                            padding: EdgeInsets.all(1.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.white70),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(
+                                              15.0) //                 <--- border radius here
+                                          ),
+                                    ),
+                                    child: category.image,
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(4),
+                                  child: Text(
+                                    category.name,
+                                    style: TextStyle(fontSize: 17.0),
+                                  ),
+                                )
+                              ],
                             ),
-                            Container(
-                              padding: EdgeInsets.all(4),
-                              child: Text(
-                                category.name,
-                                style: TextStyle(fontSize: 17.0),
-                              ),
-                            )
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                },
-              ).toList(),
+                      );
+                    },
+                  ).toList(),
+                ),
+              ),
             );
           } else if (snapshot.hasError) {
             return Center(
