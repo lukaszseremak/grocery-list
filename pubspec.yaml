@@ -15,6 +15,7 @@ dependencies:
   cloud_firestore: ^0.13.5
   firebase_auth: ^0.11.1+6
   google_sign_in: ^4.0.2
+  syncfusion_flutter_gauges: ^1.0.0-beta
 
 
 dev_dependencies:
