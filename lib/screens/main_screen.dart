@@ -26,6 +26,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   Map<String, List<String>> selectedProducts = Map();
+  final _formKey = GlobalKey<FormState>();
+  String _name = "";
 
   _showReportDialog(String typeOfProduct, List products) {
     showDialog(
@@ -33,6 +35,11 @@ class _MainScreenState extends State<MainScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Choose $typeOfProduct"),
+            shape: RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(
+                22.0,
+              ),
+            ),
             content: MultiSelectChip(
               products,
               typeOfProduct,
@@ -51,8 +58,105 @@ class _MainScreenState extends State<MainScreen> {
               },
             ),
             actions: <Widget>[
-              FlatButton(
+              RaisedButton(
+                child: Text("Add"),
+                color: Colors.black38,
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(
+                    10.0,
+                  ),
+                ),
+                onPressed: () async {
+                  String received = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Stack(
+                            overflow: Overflow.visible,
+                            children: <Widget>[
+                              Positioned(
+                                right: -40.0,
+                                top: -40.0,
+                                child: InkResponse(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 15.0,
+                                    child: Icon(
+                                      Icons.close,
+                                      size: 15.0,
+                                      color: Colors.black,
+                                    ),
+                                    backgroundColor: Colors.red[300],
+                                  ),
+                                ),
+                              ),
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: TextFormField(
+                                        decoration: const InputDecoration(
+                                            labelText: 'New product'),
+                                        keyboardType: TextInputType.text,
+                                        validator: (value) {
+                                          if (value.length < 2) {
+                                            return 'Name not long enough';
+                                          }
+                                        },
+                                        onSaved: (value) => _name = value,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: RaisedButton(
+                                        child: Text("Submit"),
+                                        color: Colors.black38,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              new BorderRadius.circular(
+                                            10.0,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          print(_formKey);
+                                          if (_formKey.currentState
+                                              .validate()) {
+                                            _formKey.currentState.save();
+                                          }
+                                          print(_name);
+                                          print(products);
+
+                                          Navigator.of(context).pop(_name);
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      });
+                  if (received.isNotEmpty) {
+                    setState(() {
+                      products.add(received);
+                    });
+                  }
+                },
+              ),
+              RaisedButton(
                 child: Text("Choose"),
+                color: Colors.black38,
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(
+                    10.0,
+                  ),
+                ),
                 onPressed: () => Navigator.of(context).pop(),
               )
             ],
@@ -226,6 +330,7 @@ class _MultiSelectChipState extends State<MultiSelectChip> {
         child: ChoiceChip(
           label: Text(item),
           selected: selectedChoices.contains(item),
+          selectedColor: Colors.amber[200],
           onSelected: (selected) {
             setState(() {
               selectedChoices.contains(item)
