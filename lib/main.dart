@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'screens/category_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_screen.dart';
 
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
       routes: {
         'login_screen': (context) => LoginScreen(),
         'main_screen': (context) => MainScreen(),
+        'category_screen': (context) => CategoryScreen(),
       },
     );
   }

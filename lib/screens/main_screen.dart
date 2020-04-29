@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:shadow/shadow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shopping_list/const.dart';
+import 'package:shopping_list/screens/category_screen.dart';
 
 class Category {
+  String uid;
   String name;
   Image image;
   List products;
 
-  Category({this.name, this.image, this.products});
+  Category({this.uid, this.name, this.image, this.products});
 
   factory Category.fromDocument(DocumentSnapshot document) {
     return Category(
+      uid: document.documentID,
       name: document['name'] as String,
       image: categoryNameImageMapping[document['name']],
       products: document['products'],
@@ -26,145 +28,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   Map<String, List<String>> selectedProducts = Map();
-  final _formKey = GlobalKey<FormState>();
-  String _name = "";
-
-  _showReportDialog(String typeOfProduct, List products) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Choose $typeOfProduct"),
-            shape: RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(
-                22.0,
-              ),
-            ),
-            content: MultiSelectChip(
-              products,
-              typeOfProduct,
-              onSelectionChanged: (selectedList) {
-                setState(() {
-                  if (selectedProducts.containsKey(typeOfProduct)) {
-                    selectedProducts[typeOfProduct] =
-                        (selectedProducts[typeOfProduct] + selectedList)
-                            .toSet()
-                            .toList();
-                  } else {
-                    selectedProducts[typeOfProduct] = selectedList;
-                  }
-                  print(selectedProducts);
-                });
-              },
-            ),
-            actions: <Widget>[
-              RaisedButton(
-                child: Text("Add"),
-                color: Colors.black38,
-                shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(
-                    10.0,
-                  ),
-                ),
-                onPressed: () async {
-                  String received = await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          content: Stack(
-                            overflow: Overflow.visible,
-                            children: <Widget>[
-                              Positioned(
-                                right: -40.0,
-                                top: -40.0,
-                                child: InkResponse(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: CircleAvatar(
-                                    radius: 15.0,
-                                    child: Icon(
-                                      Icons.close,
-                                      size: 15.0,
-                                      color: Colors.black,
-                                    ),
-                                    backgroundColor: Colors.red[300],
-                                  ),
-                                ),
-                              ),
-                              Form(
-                                key: _formKey,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                        decoration: const InputDecoration(
-                                            labelText: 'New product'),
-                                        keyboardType: TextInputType.text,
-                                        validator: (value) {
-                                          if (value.length < 2) {
-                                            return 'Name not long enough';
-                                          }
-                                        },
-                                        onSaved: (value) => _name = value,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: RaisedButton(
-                                        child: Text("Submit"),
-                                        color: Colors.black38,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              new BorderRadius.circular(
-                                            10.0,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          print(_formKey);
-                                          if (_formKey.currentState
-                                              .validate()) {
-                                            _formKey.currentState.save();
-                                          }
-                                          print(_name);
-                                          print(products);
-
-                                          Navigator.of(context).pop(_name);
-                                        },
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      });
-                  if (received.isNotEmpty) {
-                    setState(() {
-                      products.add(received);
-                    });
-                  }
-                },
-              ),
-              RaisedButton(
-                child: Text("Choose"),
-                color: Colors.black38,
-                shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(
-                    10.0,
-                  ),
-                ),
-                onPressed: () => Navigator.of(context).pop(),
-              )
-            ],
-          );
-        });
-  }
-
-// shopping-list-2a711
 
   @override
   Widget build(BuildContext context) {
@@ -200,8 +63,8 @@ class _MainScreenState extends State<MainScreen> {
             ListTile(
               leading: Icon(Icons.exit_to_app),
               title: Text('Logout'),
-              onTap: () => Navigator.popUntil(
-                  context, ModalRoute.withName('login_screen')),
+              onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                  'login_screen', (Route<dynamic> route) => false),
             ),
           ],
         ),
@@ -222,8 +85,32 @@ class _MainScreenState extends State<MainScreen> {
                         child: ConstrainedBox(
                           constraints: BoxConstraints.expand(),
                           child: FlatButton(
-                            onPressed: () => _showReportDialog(category.name,
-                                List<String>.from(category.products)),
+                            onPressed: () async {
+                              var selected = await Navigator.push(
+                                context,
+                                new MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      new CategoryScreen(
+                                    uid: category.uid,
+                                    name: category.name,
+                                    products: category.products
+                                        .map(
+                                          (name) => Product(
+                                            name: name,
+                                            selected: (selectedProducts[
+                                                        category.name] ??
+                                                    [])
+                                                .contains(name),
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                ),
+                              );
+                              if (selected != null) {
+                                selectedProducts[category.name] = selected;
+                              }
+                            },
                             padding: EdgeInsets.all(1.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -233,9 +120,10 @@ class _MainScreenState extends State<MainScreen> {
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.white70),
                                       borderRadius: BorderRadius.all(
-                                          Radius.circular(
-                                              15.0) //                 <--- border radius here
-                                          ),
+                                        Radius.circular(
+                                          15.0,
+                                        ), //  ,               <--- border radius here
+                                      ),
                                     ),
                                     child: category.image,
                                   ),
@@ -258,46 +146,9 @@ class _MainScreenState extends State<MainScreen> {
               ),
             );
           } else if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 80,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Text(
-                      'Error: ${snapshot.error}',
-                      style: TextStyle(
-                        fontSize: 15.0,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            );
+            return SnapshotError(snapshot: snapshot);
           } else {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    child: CircularProgressIndicator(),
-                    width: 60,
-                    height: 60,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Text('Awaiting result...'),
-                  )
-                ],
-              ),
-            );
+            return SnapshotLoading();
           }
         },
       ),
@@ -305,51 +156,61 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-class MultiSelectChip extends StatefulWidget {
-  final List<String> productList;
-  final String typeOfProduct;
-  final Function(List<String>) onSelectionChanged;
-
-  MultiSelectChip(this.productList, this.typeOfProduct,
-      {this.onSelectionChanged});
-
-  @override
-  _MultiSelectChipState createState() => _MultiSelectChipState();
-}
-
-class _MultiSelectChipState extends State<MultiSelectChip> {
-  // String selectedChoice = "";
-  List<String> selectedChoices = List();
-
-  _buildChoiceList() {
-    List<Widget> choices = List();
-
-    widget.productList.forEach((item) {
-      choices.add(Container(
-        padding: const EdgeInsets.all(2.0),
-        child: ChoiceChip(
-          label: Text(item),
-          selected: selectedChoices.contains(item),
-          selectedColor: Colors.amber[200],
-          onSelected: (selected) {
-            setState(() {
-              selectedChoices.contains(item)
-                  ? selectedChoices.remove(item)
-                  : selectedChoices.add(item);
-              widget.onSelectionChanged(selectedChoices);
-            });
-          },
-        ),
-      ));
-    });
-
-    return choices;
-  }
+class SnapshotLoading extends StatelessWidget {
+  const SnapshotLoading({
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      children: _buildChoiceList(),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            child: CircularProgressIndicator(),
+            width: 60,
+            height: 60,
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: Text('Awaiting result...'),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class SnapshotError extends StatelessWidget {
+  const SnapshotError({Key key, this.snapshot}) : super(key: key);
+
+  final AsyncSnapshot<dynamic> snapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            color: Colors.red,
+            size: 80,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Text(
+              'Error: ${snapshot.error}',
+              style: TextStyle(
+                fontSize: 15.0,
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

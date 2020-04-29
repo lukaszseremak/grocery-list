@@ -132,6 +132,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.4"
+  flutter_speed_dial:
+    dependency: "direct main"
+    description:
+      name: flutter_speed_dial
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.5"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -247,13 +254,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
-  shadow:
-    dependency: "direct main"
-    description:
-      name: shadow
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.5"
   sky_engine:
     dependency: transitive
     description: flutter
