@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shopping_list/const.dart';
 import 'package:shopping_list/screens/category_screen.dart';
+import 'package:shopping_list/services/auth.dart';
+import 'package:shopping_list/shared/loading.dart';
 
 class Category {
   String uid;
@@ -27,44 +29,129 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final AuthService _auth = AuthService();
+
   Map<String, List<String>> selectedProducts = Map();
+  List<String> shopping_lists = ["Private", "Tesco", "Pepco"];
+
+  void _showModalMenuSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (builder) {
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                height: 50.0,
+                child: Row(
+                  children: <Widget>[
+                    CircleAvatar(
+                      radius: 25.0,
+                      backgroundColor: Colors.red,
+                      backgroundImage:
+                          AssetImage('assets/images/lukasz_avatar_image.jpg'),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Text(
+                      'Łukasz',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontFamily: 'IndieFlower'),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                child: Divider(
+                  color: Colors.grey,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 4),
+                decoration: new BoxDecoration(
+                    color: Colors.grey[800],
+                    borderRadius: new BorderRadius.all(
+                      const Radius.circular(40.0),
+                    )),
+                child: ListTile(
+                  title: Text(
+                    shopping_lists[0],
+                  ),
+                  selected: true,
+                  onTap: () {},
+                ),
+              ),
+              Container(
+                child: ListTile(
+                  title: Text(
+                    shopping_lists[1],
+                  ),
+                  selected: false,
+                  onTap: () {},
+                ),
+              ),
+              SizedBox(
+                child: Divider(
+                  color: Colors.grey,
+                ),
+              ),
+              Container(
+                child: FlatButton(
+                  onPressed: () {},
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.add),
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      Text("Create new list")
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                child: Divider(
+                  color: Colors.grey,
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.exit_to_app),
+                title: Text('Logout'),
+                onTap: () async {
+                  await _auth.signOut();
+                  Navigator.of(context).pop();
+                  //Navigator.of(context).pushNamedAndRemoveUntil(
+                  //  'login_screen', (Route<dynamic> route) => false);
+                },
+              ),
+            ],
+          ),
+          padding: EdgeInsets.all(40.0),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Menu'),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+      appBar: AppBar(),
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            DrawerHeader(
-              child: Text(
-                'Menu',
-                style: TextStyle(color: Colors.white, fontSize: 25),
-              ),
-              decoration: BoxDecoration(
-                  color: Colors.grey[400],
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/images/menu.png'))),
+            IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: _showModalMenuSheet,
             ),
-            ListTile(
-              leading: Icon(Icons.verified_user),
-              title: Text('Profile'),
-              onTap: () => {Navigator.of(context).pop()},
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-              onTap: () => {Navigator.of(context).pop()},
-            ),
-            ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text('Logout'),
-              onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                  'login_screen', (Route<dynamic> route) => false),
+            Text(
+              'Menu',
+              style: TextStyle(fontSize: 18),
             ),
           ],
         ),
@@ -148,36 +235,9 @@ class _MainScreenState extends State<MainScreen> {
           } else if (snapshot.hasError) {
             return SnapshotError(snapshot: snapshot);
           } else {
-            return SnapshotLoading();
+            return Loading();
           }
         },
-      ),
-    );
-  }
-}
-
-class SnapshotLoading extends StatelessWidget {
-  const SnapshotLoading({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            child: CircularProgressIndicator(),
-            width: 60,
-            height: 60,
-          ),
-          const Padding(
-            padding: EdgeInsets.only(top: 16),
-            child: Text('Awaiting result...'),
-          )
-        ],
       ),
     );
   }
